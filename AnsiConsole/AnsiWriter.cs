@@ -1,48 +1,143 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace AnsiConsole
 {
+    /// <summary>
+    /// Supports writing strings and ANSI color codes to a <see cref="TextWriter"/>.
+    /// </summary>
     public class AnsiWriter
     {
+        /// <summary>
+        /// The underlying <see cref="TextWriter"/>.
+        /// </summary>
         public TextWriter Writer {get;}
 
 
+        /// <summary>
+        /// Creates a new instance of <see cref="AnsiWriter"/>
+        /// using the specified <paramref name="writer"/>.
+        /// </summary>
         public AnsiWriter(TextWriter writer)
         {
             this.Writer = writer;
         }
 
-        public AnsiWriter Write(string text)
+        /// <summary>
+        /// Writes a character to the text string or stream.
+        /// </summary>
+        /// <param name="value">The character to write to the text stream.</param>
+        public AnsiWriter Write(char value)
         {
-            Writer.Write(text);
+            Writer.Write(value);
             return this;
         }
 
+        /// <summary>
+        /// Writes a string to the text string or stream.
+        /// </summary>
+        /// <param name="value">The string to write.</param>
+        public AnsiWriter Write(string value)
+        {
+            Writer.Write(value);
+            return this;
+        }
+
+        /// <summary>
+        /// Writes a line terminator to the text string or stream.
+        /// </summary>
         public AnsiWriter WriteLine()
         {
             Writer.WriteLine();
             return this;
         }
 
-        public AnsiWriter Write(string text, ConsoleColor color)
+        /// <summary>
+        /// Writes a character to the text string or stream using
+        /// the specified <paramref name="color"/>.
+        /// </summary>
+        /// <param name="value">The character to write to the text stream.</param>
+        /// <param name="color">The color set before writing the string.</param>
+        public AnsiWriter Write(char value, ConsoleColor color)
         {
-            SetColor(color);
-            Writer.Write(text);
+            SetForegroundColor(color);
+            Writer.Write(value);
             return this;
         }
 
-        public AnsiWriter WriteLine(string text, ConsoleColor color)
+        /// <summary>
+        /// Writes a string to the text string or stream using
+        /// the specified <paramref name="color"/>.
+        /// </summary>
+        /// <param name="value">The string to write.</param>
+        /// <param name="color">The color set before writing the string.</param>
+        public AnsiWriter Write(string value, ConsoleColor color)
         {
-            SetColor(color);
-            Writer.WriteLine(text);
+            SetForegroundColor(color);
+            Writer.Write(value);
             return this;
         }
 
-        public AnsiWriter SetColor(ConsoleColor color)
+        /// <summary>
+        /// Writes a string followed by a line terminator to the text
+        /// string or stream using the specified <paramref name="color"/>.
+        /// </summary>
+        /// <param name="value">The string to write.</param>
+        /// <param name="color">The color set before writing the string.</param>
+        public AnsiWriter WriteLine(string value, ConsoleColor color)
         {
-            //
+            SetForegroundColor(color);
+            Writer.WriteLine(value);
             return this;
         }
+
+        /// <summary>
+        /// Sets the foreground color of the console.
+        /// </summary>
+        public AnsiWriter SetForegroundColor(ConsoleColor color)
+        {
+            Writer.Write(GetColorChars(color));
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the foreground and background console colors to their defaults.
+        /// </summary>
+        public AnsiWriter ResetColor()
+        {
+            Writer.Write($"\x1b[0m");
+            return this;
+        }
+
+        private string GetColorChars(ConsoleColor color)
+        {
+            string colorChars;
+            if (colorMap.TryGetValue(color, out colorChars))
+                return $"\x1b[{colorChars}m";
+
+            throw new ApplicationException($"No color found matching '{color}'!");
+        }
+
+        private static readonly Dictionary<ConsoleColor, string> colorMap = new Dictionary<ConsoleColor, string>
+        {
+            [ConsoleColor.Gray] = "1;30",
+            [ConsoleColor.Red] = "1;31",
+            [ConsoleColor.Green] = "1;32",
+            [ConsoleColor.Yellow] = "1;33",
+            [ConsoleColor.Blue] = "1;34",
+            [ConsoleColor.Magenta] = "1;35",
+            [ConsoleColor.Cyan] = "1;36",
+            [ConsoleColor.White] = "1;37",
+
+            [ConsoleColor.Black] = "0;30",
+            [ConsoleColor.DarkRed] = "0;31",
+            [ConsoleColor.DarkGreen] = "0;32",
+            [ConsoleColor.DarkYellow] = "0;33",
+            [ConsoleColor.DarkBlue] = "0;34",
+            [ConsoleColor.DarkMagenta] = "0;35",
+            [ConsoleColor.DarkCyan] = "0;36",
+            [ConsoleColor.DarkGray] = "0;37",
+        };
     }
 }
