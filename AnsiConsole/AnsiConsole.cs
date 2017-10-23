@@ -2,16 +2,26 @@
 
 namespace AnsiConsole
 {
+    /// <summary>
+    /// Limited extension of <see cref="Console"/> adding support
+    /// for colorizing text using ANSI color characters.
+    /// </summary>
     public static class AnsiConsole
     {
-        public static AnsiWriter Out {get;}
-        public static AnsiWriter Error {get;}
+        /// <summary>
+        /// When enabled, ANSI color codes are written to the console.
+        /// Otherwise the default color-buffers are used.
+        /// </summary>
+        public static bool Enabled {get; set;} = true;
 
+        /// <summary>
+        /// Gets the standard output stream wrapped in an <see cref="AnsiWriter"/>.
+        /// </summary>
+        public static AnsiWriter Out => new AnsiWriter(Console.Out, Enabled);
 
-        static AnsiConsole()
-        {
-            Out = new AnsiWriter(Console.Out);
-            Error = new AnsiWriter(Console.Error);
-        }
+        /// <summary>
+        /// Gets the standard error stream wrapped in an <see cref="AnsiWriter"/>.
+        /// </summary>
+        public static AnsiWriter Error => new AnsiWriter(Console.Error, Enabled);
     }
 }

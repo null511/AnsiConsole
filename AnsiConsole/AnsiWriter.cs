@@ -10,6 +10,12 @@ namespace AnsiConsole
     public class AnsiWriter
     {
         /// <summary>
+        /// When enabled, ANSI color codes are written to the console.
+        /// Otherwise the default color-buffers are used.
+        /// </summary>
+        public bool AnsiEnabled {get;}
+
+        /// <summary>
         /// The underlying <see cref="TextWriter"/>.
         /// </summary>
         public TextWriter Writer {get;}
@@ -19,10 +25,14 @@ namespace AnsiConsole
         /// Creates a new instance of <see cref="AnsiWriter"/>
         /// using the specified <paramref name="writer"/>.
         /// </summary>
-        public AnsiWriter(TextWriter writer)
+        public AnsiWriter(TextWriter writer, bool ansiEnabled = true)
         {
             this.Writer = writer;
+            this.AnsiEnabled = ansiEnabled;
         }
+
+        //-----------------------------
+        #region Default Methods
 
         /// <summary>
         /// Writes a character to the text string or stream.
@@ -45,6 +55,17 @@ namespace AnsiConsole
         }
 
         /// <summary>
+        /// Writes the text representation of an object to the text string
+        /// or stream by calling the ToString method on that object.
+        /// </summary>
+        /// <param name="value">The object to write.</param>
+        public AnsiWriter Write(object value)
+        {
+            Writer.Write(value);
+            return this;
+        }
+
+        /// <summary>
         /// Writes a line terminator to the text string or stream.
         /// </summary>
         public AnsiWriter WriteLine()
@@ -52,6 +73,31 @@ namespace AnsiConsole
             Writer.WriteLine();
             return this;
         }
+
+        /// <summary>
+        /// Writes a string followed by a line terminator to the text string or stream.
+        /// </summary>
+        /// <param name="value">The string to write.</param>
+        public AnsiWriter WriteLine(string value)
+        {
+            Writer.WriteLine(value);
+            return this;
+        }
+
+        /// <summary>
+        /// Writes the text representation of an object by calling the ToString method
+        /// on that object, followed by a line terminator to the text string or stream.
+        /// </summary>
+        /// <param name="value">The object to write.</param>
+        public AnsiWriter WriteLine(object value)
+        {
+            Writer.WriteLine(value);
+            return this;
+        }
+
+        #endregion
+        //-----------------------------
+        #region Color Methods
 
         /// <summary>
         /// Writes a character to the text string or stream using
@@ -80,6 +126,20 @@ namespace AnsiConsole
         }
 
         /// <summary>
+        /// Writes the text representation of an object to the text
+        /// string or stream using the specified <paramref name="color"/>
+        /// by calling the ToString method on that object.
+        /// </summary>
+        /// <param name="value">The object to write.</param>
+        /// <param name="color">The color set before writing the string.</param>
+        public AnsiWriter Write(object value, ConsoleColor color)
+        {
+            SetForegroundColor(color);
+            Writer.Write(value);
+            return this;
+        }
+
+        /// <summary>
         /// Writes a string followed by a line terminator to the text
         /// string or stream using the specified <paramref name="color"/>.
         /// </summary>
@@ -93,11 +153,32 @@ namespace AnsiConsole
         }
 
         /// <summary>
+        /// Writes the text representation of an object by calling the ToString method
+        /// on that object using the specified <paramref name="color"/>, followed by
+        /// a line terminator to the text string or stream.
+        /// </summary>
+        /// <param name="value">The object to write.</param>
+        /// <param name="color">The color set before writing the string.</param>
+        public AnsiWriter WriteLine(object value, ConsoleColor color)
+        {
+            SetForegroundColor(color);
+            Writer.WriteLine(value);
+            return this;
+        }
+
+        #endregion
+        //-----------------------------
+
+        /// <summary>
         /// Sets the foreground color of the console.
         /// </summary>
         public AnsiWriter SetForegroundColor(ConsoleColor color)
         {
-            Writer.Write(GetColorChars(color));
+            if (AnsiEnabled)
+                Writer.Write(GetColorChars(color));
+            else
+                Console.ForegroundColor = color;
+
             return this;
         }
 
@@ -106,7 +187,11 @@ namespace AnsiConsole
         /// </summary>
         public AnsiWriter ResetColor()
         {
-            Writer.Write($"\x1b[0m");
+            if (AnsiEnabled)
+                Writer.Write($"\x1b[0m");
+            else
+                Console.ResetColor();
+
             return this;
         }
 
