@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AnsiConsole</id>
+    <title>AnsiConsole</title>
+    <version>$version$</version>
+    <authors>null511</authors>
+    <projectUrl>http://github.com/null511/AnsiConsole</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>Console extensions supporting ANSI output.</summary>
+    <description>C# .NET extended Console class supporting ANSI output.</description>
+    <copyright>Copyright 2018</copyright>
+    <tags>console ansi</tags>
+  </metadata>
+</package>
