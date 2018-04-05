@@ -6,7 +6,7 @@ namespace AnsiConsole
     /// Limited extension of <see cref="Console"/> adding support
     /// for colorizing text using ANSI color characters.
     /// </summary>
-    public static class AnsiConsole
+    public static class ConsoleEx
     {
         /// <summary>
         /// When enabled, ANSI color codes are written to the console.

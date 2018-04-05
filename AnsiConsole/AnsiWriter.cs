@@ -188,17 +188,16 @@ namespace AnsiConsole
         public AnsiWriter ResetColor()
         {
             if (AnsiEnabled)
-                Writer.Write($"\x1b[0m");
+                Writer.Write("\x1b[0m");
             else
                 Console.ResetColor();
 
             return this;
         }
 
-        private string GetColorChars(ConsoleColor color)
+        private static string GetColorChars(ConsoleColor color)
         {
-            string colorChars;
-            if (colorMap.TryGetValue(color, out colorChars))
+            if (colorMap.TryGetValue(color, out var colorChars))
                 return $"\x1b[{colorChars}m";
 
             throw new ApplicationException($"No color found matching '{color}'!");
